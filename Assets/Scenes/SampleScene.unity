@@ -386,6 +386,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vertical: 0
+  animName: 
+  playAnim: 0
+  twoHanded: 0
+  oh_attacks:
+  - oh_attack_1
+  - oh_attack_2
+  - oh_attack_3
+  th_attacks:
+  - th_attack_1
+  - th_attack_2
 --- !u!4 &1339851634 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400094, guid: f9a132340c07fed49b4f4a7822451aab, type: 3}
