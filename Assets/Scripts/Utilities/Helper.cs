@@ -7,10 +7,11 @@ namespace Utilities
         [Range(0, 1)] [SerializeField] private float vertical;
 
 
-        [SerializeField] private string animName;
         [SerializeField] private bool playAnim;
         [SerializeField] private bool twoHanded;
         [SerializeField] private bool enableRootMotion;
+        [SerializeField] private bool useItem;
+        [SerializeField] private bool interacting;
         
         [SerializeField]private string[] oh_attacks;
         [SerializeField]private string[] th_attacks;
@@ -26,10 +27,23 @@ namespace Utilities
         {
             enableRootMotion = !anim.GetBool("canMove");
             anim.applyRootMotion = enableRootMotion;
+            interacting = anim.GetBool("interacting");
 
             if (enableRootMotion)
             {
                 return;
+            }
+            
+            if (useItem)
+            {
+                anim.Play("use_item");
+                useItem = false;
+            }
+
+            if (interacting)
+            {
+                playAnim = false;
+                vertical = Mathf.Clamp(vertical, 0, 0.5f);
             }
             
             anim.SetBool("two_handed", twoHanded);
@@ -49,8 +63,6 @@ namespace Utilities
                 vertical = 0;
                 
                 anim.CrossFade(targetAnim, 0.2f);
-                /*anim.SetBool("canMove", false);
-                enableRootMotion = true;*/
                 playAnim = false;
             }
             anim.SetFloat("vertical", vertical);

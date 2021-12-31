@@ -26,9 +26,8 @@ public class KeepBool : StateMachineBehaviour
     {
         if (resetOnExit)
         {
-            
+            animator.SetBool(boolName, !status);
         }
-        animator.SetBool(boolName, !status);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
