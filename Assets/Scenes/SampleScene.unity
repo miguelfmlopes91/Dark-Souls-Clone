@@ -386,7 +386,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vertical: 0
-  animName: 
   playAnim: 0
   twoHanded: 0
   enableRootMotion: 0
@@ -395,7 +394,6 @@ MonoBehaviour:
   oh_attacks:
   - oh_attack_1
   - oh_attack_2
-  - oh_attack_3
   th_attacks:
   - th_attack_1
   - th_attack_2
