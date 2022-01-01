@@ -17,16 +17,39 @@ public class StateManager : MonoBehaviour
     public float Vertical { get; set; }
     public float MoveAmount { get; set; }
     public Vector3 MoveDirection { get; set; }
-
+    
     [Header("Stats")] 
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float runSpeed = 3.5f;
     [SerializeField] private float rotateSpeed = 5f;
+    [SerializeField] private float toGround = 0.5f;
 
     [Header("States")] 
     private bool running;
+    private bool onGround;
     
     private float delta;
+    [HideInInspector] public LayerMask ignoreLayers;
+    public bool OnGround
+    {
+        get
+        {
+            bool r = false;
+            Vector3 origin = transform.position + (Vector3.up * toGround);
+            float dist = toGround + 0.3f;
+            RaycastHit hit;
+            //Debug.DrawRay(origin, Vector3.down * dist);
+            if (Physics.Raycast(origin, Vector3.down, out hit, dist, ignoreLayers))
+            {
+                r = true;
+                Vector3 targetPosition = hit.point;
+                transform.position = targetPosition;
+            }
+            
+            return r;
+        }
+        set => onGround = value;
+    }
     
     public void Init()
     {
@@ -35,6 +58,9 @@ public class StateManager : MonoBehaviour
         _rigidbody.angularDrag = 999f;
         _rigidbody.drag = 4f;
         _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+        gameObject.layer = 8;
+        ignoreLayers = ~(1 << 9);
     }
 
     private void SetupAnimator()
@@ -61,13 +87,16 @@ public class StateManager : MonoBehaviour
     public void FixedTick(float d)
     {
         delta = d;
-        _rigidbody.drag = (MoveAmount > 0) ? 0f : 4f;
+        _rigidbody.drag = (MoveAmount > 0 || !OnGround) ? 0f : 4f;
         
         //apply movement to the model
         float targetSpeed = moveSpeed;
         if (running)
             targetSpeed = runSpeed;
-        _rigidbody.velocity = MoveDirection * (targetSpeed * MoveAmount);
+
+        if (OnGround)
+            _rigidbody.velocity = MoveDirection * (targetSpeed * MoveAmount);
+
 
         //apply real rotation to model
         Vector3 targetDir = MoveDirection;
@@ -80,6 +109,12 @@ public class StateManager : MonoBehaviour
         transform.rotation = targetRotation;
         
         HandleMovementAnimations();
+    }
+
+    public void Tick(float d)
+    {
+        delta = d;
+        var isGrounded = OnGround;//todo: update getter here 
     }
 
     private void HandleMovementAnimations()

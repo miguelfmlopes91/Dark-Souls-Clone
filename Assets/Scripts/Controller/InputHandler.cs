@@ -27,12 +27,13 @@ namespace Controller
             GetInput();
             UpdateStates();
             _stateManager.FixedTick(delta);
+            _cameraManager.FixedTick(delta);
         }
 
         private void Update()
         {
             delta = Time.deltaTime;
-            _cameraManager.Tick(delta);
+            _stateManager.Tick(delta);
         }
 
         private void GetInput()

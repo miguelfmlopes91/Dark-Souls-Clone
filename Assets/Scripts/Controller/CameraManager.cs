@@ -37,7 +37,7 @@ namespace Controller
             pivot = camTrans.parent;
         }
         
-        public void Tick(float d)
+        public void FixedTick(float d)
         {
             float h = Input.GetAxis("Mouse X");
             float v = Input.GetAxis("Mouse Y");
