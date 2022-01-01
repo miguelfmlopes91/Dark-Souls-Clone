@@ -25,6 +25,8 @@ namespace Controller
         {
             delta = Time.fixedDeltaTime;
             GetInput();
+            UpdateStates();
+            _stateManager.FixedTick(delta);
         }
 
         private void Update()
@@ -43,7 +45,12 @@ namespace Controller
         {
             _stateManager.Horizontal = horizontal;
             _stateManager.Vertical = vertical;
-            _stateManager.Tick(delta);
+
+            Vector3 v = _stateManager.Vertical * _cameraManager.transform.forward;
+            Vector3 h = _stateManager.Horizontal * _cameraManager.transform.right;
+            _stateManager.MoveDirection = (v + h).normalized;
+            float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
+            _stateManager.MoveAmount = Mathf.Clamp01(m);
         }
     }
 }

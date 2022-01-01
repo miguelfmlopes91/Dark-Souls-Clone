@@ -23,9 +23,9 @@ namespace Controller
         [SerializeField] private float lookAngle;
         [SerializeField] private float tiltAngle;
         
-        private Transform target;
-        private Transform pivot;
-        private Transform camTrans;
+        public Transform target;
+        [HideInInspector] public Transform pivot;
+        [HideInInspector] public Transform camTrans;
 
         public static CameraManager Instance { get; private set; }
 

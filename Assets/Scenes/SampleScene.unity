@@ -297,7 +297,7 @@ MonoBehaviour:
   lockOn: 0
   followSpeed: 9
   mouseSpeed: 2
-  controllerSpeed: 7
+  controllerSpeed: 5
   minAngle: -35
   maxAngle: 35
   lookAngle: 0

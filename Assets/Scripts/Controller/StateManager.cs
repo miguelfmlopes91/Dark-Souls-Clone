@@ -7,17 +7,34 @@ namespace Controller
 {
 public class StateManager : MonoBehaviour
 {
-    public float Horizontal { get; set; }
-    public float Vertical { get; set; }
-    private float delta;
+    [Header("Model")]
+    private GameObject _activeModel;
     private Animator _anim;
     private Rigidbody _rigidbody;
-    private GameObject _activeModel;
+    
+    [field: Header("inputs")]
+    public float Horizontal { get; set; } 
+    public float Vertical { get; set; }
+    public float MoveAmount { get; set; }
+    public Vector3 MoveDirection { get; set; }
+
+    [Header("Stats")] 
+    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float runSpeed = 3.5f;
+    [SerializeField] private float rotateSpeed = 5f;
+
+    [Header("States")] 
+    private bool running;
+    
+    private float delta;
     
     public void Init()
     {
         SetupAnimator();
         _rigidbody = GetComponent<Rigidbody>();
+        _rigidbody.angularDrag = 999f;
+        _rigidbody.drag = 4f;
+        _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
     private void SetupAnimator()
@@ -41,20 +58,33 @@ public class StateManager : MonoBehaviour
         }
     }
 
-    public void Tick(float d)
+    public void FixedTick(float d)
     {
         delta = d;
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-    
+        _rigidbody.drag = (MoveAmount > 0) ? 0f : 4f;
+        
+        //apply movement to the model
+        float targetSpeed = moveSpeed;
+        if (running)
+            targetSpeed = runSpeed;
+        _rigidbody.velocity = MoveDirection * (targetSpeed * MoveAmount);
+
+        //apply real rotation to model
+        Vector3 targetDir = MoveDirection;
+        targetDir.y = 0;
+        if (targetDir == Vector3.zero)
+            targetDir = transform.forward;
+
+        Quaternion tr = Quaternion.LookRotation(targetDir);
+        Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, delta * MoveAmount * rotateSpeed);
+        transform.rotation = targetRotation;
+        
+        HandleMovementAnimations();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void HandleMovementAnimations()
     {
-    
+        _anim.SetFloat("vertical", MoveAmount, 0.4f, delta);
     }
 }
 }
