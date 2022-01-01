@@ -24,9 +24,10 @@ public class StateManager : MonoBehaviour
     [SerializeField] private float rotateSpeed = 5f;
     [SerializeField] private float toGround = 0.5f;
 
-    [Header("States")] 
-    private bool running;
+    [field: Header("States")] 
+    public bool Running { get; set; }
     private bool onGround;
+    private bool lockOn;
     
     private float delta;
     [HideInInspector] public LayerMask ignoreLayers;
@@ -61,6 +62,8 @@ public class StateManager : MonoBehaviour
 
         gameObject.layer = 8;
         ignoreLayers = ~(1 << 9);
+        
+        _anim.SetBool("onGround", true);
     }
 
     private void SetupAnimator()
@@ -91,22 +94,27 @@ public class StateManager : MonoBehaviour
         
         //apply movement to the model
         float targetSpeed = moveSpeed;
-        if (running)
+        if (Running)
+        {
             targetSpeed = runSpeed;
-
+            lockOn = false;
+        }
+        
         if (OnGround)
             _rigidbody.velocity = MoveDirection * (targetSpeed * MoveAmount);
 
+        if (!lockOn)
+        {
+            //apply real rotation to model
+            Vector3 targetDir = MoveDirection;
+            targetDir.y = 0;
+            if (targetDir == Vector3.zero)
+                targetDir = transform.forward;
 
-        //apply real rotation to model
-        Vector3 targetDir = MoveDirection;
-        targetDir.y = 0;
-        if (targetDir == Vector3.zero)
-            targetDir = transform.forward;
-
-        Quaternion tr = Quaternion.LookRotation(targetDir);
-        Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, delta * MoveAmount * rotateSpeed);
-        transform.rotation = targetRotation;
+            Quaternion tr = Quaternion.LookRotation(targetDir);
+            Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, delta * MoveAmount * rotateSpeed);
+            transform.rotation = targetRotation;
+        }
         
         HandleMovementAnimations();
     }
@@ -114,11 +122,12 @@ public class StateManager : MonoBehaviour
     public void Tick(float d)
     {
         delta = d;
-        var isGrounded = OnGround;//todo: update getter here 
+        _anim.SetBool("onGround", OnGround);
     }
 
     private void HandleMovementAnimations()
     {
+        _anim.SetBool("run", Running);
         _anim.SetFloat("vertical", MoveAmount, 0.4f, delta);
     }
 }

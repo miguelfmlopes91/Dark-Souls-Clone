@@ -10,6 +10,7 @@ namespace Controller
         private float vertical;
         private float horizontal;
         private float delta;
+        private bool runInput;
 
         private StateManager _stateManager;
         private CameraManager _cameraManager;
@@ -40,6 +41,7 @@ namespace Controller
         {
             vertical = Input.GetAxis("Vertical");
             horizontal = Input.GetAxis("Horizontal");
+            runInput = Input.GetButton("RunInput");
         }
 
         private void UpdateStates()
@@ -52,6 +54,15 @@ namespace Controller
             _stateManager.MoveDirection = (v + h).normalized;
             float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
             _stateManager.MoveAmount = Mathf.Clamp01(m);
+
+            if (runInput)
+            {
+                _stateManager.Running = _stateManager.MoveAmount > 0;
+            }
+            else
+            {
+                _stateManager.Running = false;
+            }
         }
     }
 }
