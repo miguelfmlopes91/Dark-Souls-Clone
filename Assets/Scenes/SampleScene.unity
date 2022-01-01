@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lockOn: 0
-  followSpeed: 9
+  followSpeed: 3
   mouseSpeed: 2
   controllerSpeed: 5
   minAngle: -35
@@ -734,8 +734,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce969eaa0275c47ac82de9746d495475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  runSpeed: 8
+  moveSpeed: 3.5
+  runSpeed: 5.5
   rotateSpeed: 5
   toGround: 0.5
   ignoreLayers:
