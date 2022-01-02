@@ -20,6 +20,7 @@ public class StateManager : MonoBehaviour
     public Vector3 MoveDirection { get; set; }
     public bool rt, rb, lt, lb; //TODO: have some enums
     
+    
     [Header("Stats")] 
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float runSpeed = 3.5f;
@@ -31,6 +32,7 @@ public class StateManager : MonoBehaviour
     private bool onGround;
     private bool lockOn;
     private bool inAction;
+    public bool IsTwoHanded { get; set; }
     public bool CanMove { get; private set; }
     public bool OnGround
     {
@@ -52,7 +54,9 @@ public class StateManager : MonoBehaviour
         }
         set => onGround = value;
     }
-
+    
+    
+    
     public float Delta { get; private set; }
     private float _actionDelay;
     [HideInInspector] public LayerMask ignoreLayers;
@@ -192,6 +196,11 @@ public class StateManager : MonoBehaviour
         inAction = true;
         Anim.CrossFade(targetAnimaton, 0.2f);
         //_rigidbody.velocity = Vector3.zero;
+    }
+
+    public void HandleTwoHanded()
+    {
+        Anim.SetBool("two_handed", IsTwoHanded);
     }
 }
 }

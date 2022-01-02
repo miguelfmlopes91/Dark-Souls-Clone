@@ -30,11 +30,6 @@ namespace Controller
             Vector3 v = (delta * multiplier) / _stateManager.Delta;
             _stateManager.RgBody.velocity = v;
         }
-
-        private void LateTick()
-        {
-            if (_stateManager) ;
-        }
     }
 }
 

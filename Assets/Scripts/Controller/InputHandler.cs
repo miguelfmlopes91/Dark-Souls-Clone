@@ -51,7 +51,10 @@ namespace Controller
         {
             vertical = Input.GetAxis("Vertical");
             horizontal = Input.GetAxis("Horizontal");
-            b_Input = Input.GetButton("b_input");
+            b_Input = Input.GetButton("B");
+            a_Input = Input.GetButton("A");
+            x_Input = Input.GetButton("X");
+            y_Input = Input.GetButtonUp("Y");
             rt_Input = Input.GetButton("RT");
             rt_Axis = Input.GetAxis("RT");
             if (rt_Axis != 0)
@@ -64,7 +67,6 @@ namespace Controller
             
             rb_Input = Input.GetButton ("RB");
             lb_Input = Input.GetButton ("LB");
-            
         }
 
         private void UpdateStates()
@@ -91,6 +93,12 @@ namespace Controller
             _stateManager.lt = lt_Input;
             _stateManager.rb = rb_Input;
             _stateManager.lb = lb_Input;
+
+            if (y_Input)
+            {
+                _stateManager.IsTwoHanded = !_stateManager.IsTwoHanded;
+                _stateManager.HandleTwoHanded();
+            }
         }
     }
 }
