@@ -9,8 +9,9 @@ public class StateManager : MonoBehaviour
 {
     [Header("Model")]
     private GameObject _activeModel;
-    private Animator _anim;
-    private Rigidbody _rigidbody;
+    public Animator Anim { get; private set; }
+    public Rigidbody RgBody { get; private set; }
+    private AnimatorHook _animatorHook;
     
     [field: Header("inputs")]
     public float Horizontal { get; set; } 
@@ -30,7 +31,7 @@ public class StateManager : MonoBehaviour
     private bool onGround;
     private bool lockOn;
     private bool inAction;
-    private bool canMove;
+    public bool CanMove { get; private set; }
     public bool OnGround
     {
         get
@@ -51,8 +52,8 @@ public class StateManager : MonoBehaviour
         }
         set => onGround = value;
     }
-    
-    private float delta;
+
+    public float Delta { get; private set; }
     private float _actionDelay;
     [HideInInspector] public LayerMask ignoreLayers;
     
@@ -60,47 +61,51 @@ public class StateManager : MonoBehaviour
     public void Init()
     {
         SetupAnimator();
-        _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.angularDrag = 999f;
-        _rigidbody.drag = 4f;
-        _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        RgBody = GetComponent<Rigidbody>();
+        RgBody.angularDrag = 999f;
+        RgBody.drag = 4f;
+        RgBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
+        _animatorHook = _activeModel.AddComponent<AnimatorHook>();
+        _animatorHook.Init(this);
+        
         gameObject.layer = 8;
         ignoreLayers = ~(1 << 9);
         
-        _anim.SetBool("onGround", true);
+        Anim.SetBool("onGround", true);
     }
 
     private void SetupAnimator()
     {
         if (_activeModel == null)
         {
-            _anim = GetComponentInChildren<Animator>();
-            if (_anim == null)
+            Anim = GetComponentInChildren<Animator>();
+            if (Anim == null)
             {
                 Debug.LogError("No model found");
             }
             else
             {
-                _activeModel = _anim.gameObject;
+                _activeModel = Anim.gameObject;
             }
         }
 
-        if (_anim == null)
+        if (Anim == null)
         {
-            _anim = _activeModel.GetComponent<Animator>();
+            Anim = _activeModel.GetComponent<Animator>();
         }
     }
 
     public void FixedTick(float d)
     {
-        delta = d;
+        Delta = d;
         
         DetectAction();
 
         if (inAction)
         {
-            _actionDelay += delta;
+            Anim.applyRootMotion = true;
+            _actionDelay += Delta;
             if (_actionDelay > 0.3f)
             {
                 inAction = false;
@@ -112,14 +117,16 @@ public class StateManager : MonoBehaviour
             }
         }
         
-        canMove = _anim.GetBool("canMove");
+        CanMove = Anim.GetBool("canMove");
 
-        if (canMove == false)
+        if (CanMove == false)
         {
             return;
         }
 
-        _rigidbody.drag = (MoveAmount > 0 || !OnGround) ? 0f : 4f;
+        Anim.applyRootMotion = false;
+        
+        RgBody.drag = (MoveAmount > 0 || !OnGround) ? 0f : 4f;
         
         //apply movement to the model
         float targetSpeed = moveSpeed;
@@ -130,7 +137,7 @@ public class StateManager : MonoBehaviour
         }
         
         if (OnGround)
-            _rigidbody.velocity = MoveDirection * (targetSpeed * MoveAmount);
+            RgBody.velocity = MoveDirection * (targetSpeed * MoveAmount);
 
         if (!lockOn)
         {
@@ -141,7 +148,7 @@ public class StateManager : MonoBehaviour
                 targetDir = transform.forward;
 
             Quaternion tr = Quaternion.LookRotation(targetDir);
-            Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, delta * MoveAmount * rotateSpeed);
+            Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, Delta * MoveAmount * rotateSpeed);
             transform.rotation = targetRotation;
         }
         
@@ -150,19 +157,19 @@ public class StateManager : MonoBehaviour
 
     public void Tick(float d)
     {
-        delta = d;
-        _anim.SetBool("onGround", OnGround);
+        Delta = d;
+        Anim.SetBool("onGround", OnGround);
     }
 
     private void HandleMovementAnimations()
     {
-        _anim.SetBool("run", Running);
-        _anim.SetFloat("vertical", MoveAmount, 0.4f, delta);
+        Anim.SetBool("run", Running);
+        Anim.SetFloat("vertical", MoveAmount, 0.4f, Delta);
     }
 
     public void DetectAction()
     {
-        if (canMove == false) return;
+        if (CanMove == false) return;
 
         if (rb == false && rt == false && lt == false && lb == false)
             return;
@@ -181,10 +188,10 @@ public class StateManager : MonoBehaviour
         if (string.IsNullOrEmpty(targetAnimaton))
             return;
 
-        canMove = false;
+        CanMove = false;
         inAction = true;
-        _anim.CrossFade(targetAnimaton, 0.2f);
-        _rigidbody.velocity = Vector3.zero;
+        Anim.CrossFade(targetAnimaton, 0.2f);
+        //_rigidbody.velocity = Vector3.zero;
     }
 }
 }
