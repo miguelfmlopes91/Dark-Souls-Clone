@@ -17,6 +17,7 @@ public class StateManager : MonoBehaviour
     public float Vertical { get; set; }
     public float MoveAmount { get; set; }
     public Vector3 MoveDirection { get; set; }
+    public bool rt, rb, lt, lb; //TODO: have some enums
     
     [Header("Stats")] 
     [SerializeField] private float moveSpeed = 2f;
@@ -28,9 +29,8 @@ public class StateManager : MonoBehaviour
     public bool Running { get; set; }
     private bool onGround;
     private bool lockOn;
-    
-    private float delta;
-    [HideInInspector] public LayerMask ignoreLayers;
+    private bool inAction;
+    private bool canMove;
     public bool OnGround
     {
         get
@@ -51,6 +51,11 @@ public class StateManager : MonoBehaviour
         }
         set => onGround = value;
     }
+    
+    private float delta;
+    private float _actionDelay;
+    [HideInInspector] public LayerMask ignoreLayers;
+    
     
     public void Init()
     {
@@ -90,6 +95,30 @@ public class StateManager : MonoBehaviour
     public void FixedTick(float d)
     {
         delta = d;
+        
+        DetectAction();
+
+        if (inAction)
+        {
+            _actionDelay += delta;
+            if (_actionDelay > 0.3f)
+            {
+                inAction = false;
+                _actionDelay = 0f;
+            }
+            else
+            {
+                return;
+            }
+        }
+        
+        canMove = _anim.GetBool("canMove");
+
+        if (canMove == false)
+        {
+            return;
+        }
+
         _rigidbody.drag = (MoveAmount > 0 || !OnGround) ? 0f : 4f;
         
         //apply movement to the model
@@ -129,6 +158,33 @@ public class StateManager : MonoBehaviour
     {
         _anim.SetBool("run", Running);
         _anim.SetFloat("vertical", MoveAmount, 0.4f, delta);
+    }
+
+    public void DetectAction()
+    {
+        if (canMove == false) return;
+
+        if (rb == false && rt == false && lt == false && lb == false)
+            return;
+
+        string targetAnimaton = null;
+
+        if (rb)
+            targetAnimaton = "oh_attack_1";
+        if (rt)
+            targetAnimaton = "oh_attack_2";
+        if (lt)
+            targetAnimaton = "oh_attack_3";
+        if (lb)
+            targetAnimaton = "th_attack_1";
+
+        if (string.IsNullOrEmpty(targetAnimaton))
+            return;
+
+        canMove = false;
+        inAction = true;
+        _anim.CrossFade(targetAnimaton, 0.2f);
+        _rigidbody.velocity = Vector3.zero;
     }
 }
 }

@@ -10,7 +10,17 @@ namespace Controller
         private float vertical;
         private float horizontal;
         private float delta;
-        private bool runInput;
+        private bool b_Input;
+        private bool a_Input;
+        private bool x_Input;
+        private bool y_Input;
+        
+        private bool rb_Input;
+        private float rt_Axis;
+        private bool rt_Input;
+        private bool lb_Input;
+        private float lt_Axis;
+        private bool lt_Input;
 
         private StateManager _stateManager;
         private CameraManager _cameraManager;
@@ -41,7 +51,20 @@ namespace Controller
         {
             vertical = Input.GetAxis("Vertical");
             horizontal = Input.GetAxis("Horizontal");
-            runInput = Input.GetButton("RunInput");
+            b_Input = Input.GetButton("b_input");
+            rt_Input = Input.GetButton("RT");
+            rt_Axis = Input.GetAxis("RT");
+            if (rt_Axis != 0)
+                rt_Input = true;
+            
+            lt_Input = Input.GetButton("LT");
+            lt_Axis = Input.GetAxis("LT");
+            if (lt_Axis != 0)
+                lt_Input = true;
+            
+            rb_Input = Input.GetButton ("RB");
+            lb_Input = Input.GetButton ("LB");
+            
         }
 
         private void UpdateStates()
@@ -55,7 +78,7 @@ namespace Controller
             float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
             _stateManager.MoveAmount = Mathf.Clamp01(m);
 
-            if (runInput)
+            if (b_Input)
             {
                 _stateManager.Running = _stateManager.MoveAmount > 0;
             }
@@ -63,6 +86,11 @@ namespace Controller
             {
                 _stateManager.Running = false;
             }
+
+            _stateManager.rt = rt_Input;
+            _stateManager.lt = lt_Input;
+            _stateManager.rb = rb_Input;
+            _stateManager.lb = lb_Input;
         }
     }
 }
