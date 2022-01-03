@@ -10,7 +10,8 @@ namespace Controller
     {
         private Animator _animator;
         private StateManager _stateManager;
-        
+        public float RootMotionMultiplier { get; set; }
+
         public void Init(StateManager st)//TODO: dependency injection
         {
             _stateManager = st;
@@ -23,11 +24,13 @@ namespace Controller
                 return;
 
             _stateManager.RgBody.drag = 0;//we don't want drag cus we moving with motions
-            float multiplier = 1;
 
+            if (RootMotionMultiplier == 0) 
+                RootMotionMultiplier = 1;
+            
             Vector3 delta = _animator.deltaPosition;
             delta.y = 0;
-            Vector3 v = (delta * multiplier) / _stateManager.Delta;
+            Vector3 v = (delta * RootMotionMultiplier) / _stateManager.Delta;
             _stateManager.RgBody.velocity = v;
         }
     }

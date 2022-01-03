@@ -28,6 +28,7 @@ public class StateManager : MonoBehaviour
     [SerializeField] private float runSpeed = 3.5f;
     [SerializeField] private float rotateSpeed = 5f;
     [SerializeField] private float toGround = 0.5f;
+    [SerializeField] private float rollSpeed = 1f;
 
     [field: Header("States")] 
     public bool Running { get; set; }
@@ -129,6 +130,7 @@ public class StateManager : MonoBehaviour
         if (!CanMove)
             return;
         
+        _animatorHook.RootMotionMultiplier = 1f;//reset root motion before checking for rolls
         HandleRolls();
         
 
@@ -194,8 +196,9 @@ public class StateManager : MonoBehaviour
 
         float v = Vertical;
         float h = Horizontal;
-
-        if (!LockOn)
+        v = (MoveAmount > 0.3f) ? 1 : 0;
+        h = 0;
+        /*if (!LockOn)
         {
             v = (MoveAmount > 0.3f) ? 1 : 0;
             h = 0;
@@ -206,7 +209,18 @@ public class StateManager : MonoBehaviour
                 v = 0;
             if (Mathf.Abs(h) < 0.3f)
                 h = 0;
+        }*/
+
+        if (v != 0)
+        {
+            if (MoveDirection == Vector3.zero)
+                MoveDirection = transform.forward;
+            Quaternion targetRot = Quaternion.LookRotation(MoveDirection);
+            transform.rotation = targetRot;
         }
+
+        _animatorHook.RootMotionMultiplier = rollSpeed;
+        
         Anim.SetFloat("vertical", v);
         Anim.SetFloat("horizontal", h);
         
