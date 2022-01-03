@@ -85,13 +85,14 @@ namespace Controller
             float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
             _stateManager.MoveAmount = Mathf.Clamp01(m);
 
+            _stateManager.RollInput = b_Input;
             if (b_Input)
             {
-                _stateManager.Running = _stateManager.MoveAmount > 0;
+                //_stateManager.Running = _stateManager.MoveAmount > 0;
             }
             else
             {
-                _stateManager.Running = false;
+                //_stateManager.Running = false;
             }
 
             _stateManager.rt = rt_Input;

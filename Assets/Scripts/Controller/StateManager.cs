@@ -20,8 +20,9 @@ public class StateManager : MonoBehaviour
     public float MoveAmount { get; set; }
     public Vector3 MoveDirection { get; set; }
     public bool rt, rb, lt, lb; //TODO: have some enums
-    
-    
+    public bool RollInput { get;  set; }
+
+
     [Header("Stats")] 
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float runSpeed = 3.5f;
@@ -55,7 +56,7 @@ public class StateManager : MonoBehaviour
         }
         set => onGround = value;
     }
-
+    
     [Header("Other")] 
     public EnemyTarget LockOnTarget;
     
@@ -125,13 +126,13 @@ public class StateManager : MonoBehaviour
         
         CanMove = Anim.GetBool("canMove");
 
-        if (CanMove == false)
-        {
+        if (!CanMove)
             return;
-        }
+        
+        HandleRolls();
+        
 
         Anim.applyRootMotion = false;
-        
         RgBody.drag = (MoveAmount > 0 || !OnGround) ? 0f : 4f;
         
         //apply movement to the model
@@ -158,7 +159,7 @@ public class StateManager : MonoBehaviour
         
         Anim.SetBool("lockOn", LockOn);
         
-        if (LockOn )
+        if (LockOn)
             HandleLockOnAnimations(MoveDirection);
         else
             HandleMovementAnimations();
@@ -184,6 +185,34 @@ public class StateManager : MonoBehaviour
         
         Anim.SetFloat("vertical", v, 0.4f, Delta);
         Anim.SetFloat("horizontal", h, 0.4f, Delta);
+    }
+
+    private void HandleRolls()
+    {
+        if (!RollInput)
+            return;
+
+        float v = Vertical;
+        float h = Horizontal;
+
+        if (!LockOn)
+        {
+            v = (MoveAmount > 0.3f) ? 1 : 0;
+            h = 0;
+        }
+        else
+        {
+            if (Mathf.Abs(v) < 0.3f)
+                v = 0;
+            if (Mathf.Abs(h) < 0.3f)
+                h = 0;
+        }
+        Anim.SetFloat("vertical", v);
+        Anim.SetFloat("horizontal", h);
+        
+        CanMove = false;
+        inAction = true;
+        Anim.CrossFade("Rolls", 0.2f);
     }
 
     public void DetectAction()
