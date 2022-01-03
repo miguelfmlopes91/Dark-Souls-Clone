@@ -22,6 +22,9 @@ namespace Controller
         private float lt_Axis;
         private bool lt_Input;
 
+        private bool leftAxis_down;
+        private bool rightAxis_down;
+
         private StateManager _stateManager;
         private CameraManager _cameraManager;
         void Start()
@@ -67,6 +70,8 @@ namespace Controller
             
             rb_Input = Input.GetButton ("RB");
             lb_Input = Input.GetButton ("LB");
+            rightAxis_down = Input.GetButtonUp ("L");
+            
         }
 
         private void UpdateStates()
@@ -98,6 +103,18 @@ namespace Controller
             {
                 _stateManager.IsTwoHanded = !_stateManager.IsTwoHanded;
                 _stateManager.HandleTwoHanded();
+            }
+
+            if (rightAxis_down)
+            {
+                _stateManager.LockOn = !_stateManager.LockOn;
+                if (_stateManager.LockOnTarget == null)
+                {
+                    _stateManager.LockOn = false;
+                }
+
+                _cameraManager.lockOnTarget = _stateManager.LockOnTarget.transform;
+                _cameraManager.LockOn = _stateManager.LockOn;
             }
         }
     }

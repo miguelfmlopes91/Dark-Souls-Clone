@@ -8,7 +8,7 @@ namespace Controller
 {
     public class CameraManager : MonoBehaviour
     {
-        [SerializeField] private bool lockOn;
+        public bool LockOn { get; set; }
         [SerializeField] private float followSpeed = 9f;
         [SerializeField] private float mouseSpeed = 2f;
         [SerializeField] private float controllerSpeed = 7f;
@@ -24,6 +24,8 @@ namespace Controller
         [SerializeField] private float tiltAngle;
         
         public Transform target;
+        public Transform lockOnTarget;
+        
         [HideInInspector] public Transform pivot;
         [HideInInspector] public Transform camTrans;
 
@@ -77,17 +79,26 @@ namespace Controller
                 smoothY = v;
             }
 
-            if (lockOn)
-            {
-                
-            }
-
-            lookAngle += smoothX * targetSpeed;
-            transform.rotation = Quaternion.Euler(0, lookAngle, 0);
-
             tiltAngle -= smoothY * targetSpeed;
             tiltAngle = Mathf.Clamp(tiltAngle, minAngle, maxAngle);
             pivot.localRotation = Quaternion.Euler(tiltAngle, 0, 0);
+            lookAngle += smoothX * targetSpeed;
+            
+            if (LockOn && lockOnTarget != null)
+            {
+                //directions towards lockOn target
+                Vector3 targetDir = lockOnTarget.position - transform.position;
+                targetDir.Normalize();
+                //targetDir.y = 0;
+                if (targetDir == Vector3.zero)
+                    targetDir = transform.forward;
+
+                Quaternion targetRotation = Quaternion.LookRotation(targetDir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, d * 9f);
+                
+                return;
+            }
+            transform.rotation = Quaternion.Euler(0, lookAngle, 0);
         }
         
         private void Awake()

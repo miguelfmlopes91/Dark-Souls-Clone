@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Enemies;
 using UnityEngine;
 
 
@@ -30,7 +31,7 @@ public class StateManager : MonoBehaviour
     [field: Header("States")] 
     public bool Running { get; set; }
     private bool onGround;
-    private bool lockOn;
+    public bool LockOn { get; set; }
     private bool inAction;
     public bool IsTwoHanded { get; set; }
     public bool CanMove { get; private set; }
@@ -54,8 +55,9 @@ public class StateManager : MonoBehaviour
         }
         set => onGround = value;
     }
-    
-    
+
+    [Header("Other")] 
+    public EnemyTarget LockOnTarget;
     
     public float Delta { get; private set; }
     private float _actionDelay;
@@ -137,13 +139,13 @@ public class StateManager : MonoBehaviour
         if (Running)
         {
             targetSpeed = runSpeed;
-            lockOn = false;
+            LockOn = false;
         }
         
         if (OnGround)
             RgBody.velocity = MoveDirection * (targetSpeed * MoveAmount);
 
-        if (!lockOn)
+        if (!LockOn)
         {
             //apply real rotation to model
             Vector3 targetDir = MoveDirection;
