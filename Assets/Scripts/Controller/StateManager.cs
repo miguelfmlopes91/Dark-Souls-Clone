@@ -145,20 +145,23 @@ public class StateManager : MonoBehaviour
         if (OnGround)
             RgBody.velocity = MoveDirection * (targetSpeed * MoveAmount);
 
-        if (!LockOn)
-        {
-            //apply real rotation to model
-            Vector3 targetDir = MoveDirection;
-            targetDir.y = 0;
-            if (targetDir == Vector3.zero)
-                targetDir = transform.forward;
 
-            Quaternion tr = Quaternion.LookRotation(targetDir);
-            Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, Delta * MoveAmount * rotateSpeed);
-            transform.rotation = targetRotation;
-        }
+        //apply real rotation to model
+        Vector3 targetDir = (LockOn == false) ? MoveDirection : LockOnTarget.transform.position - transform.position;
+        targetDir.y = 0;
+        if (targetDir == Vector3.zero)
+            targetDir = transform.forward;
+
+        Quaternion tr = Quaternion.LookRotation(targetDir);
+        Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, Delta * MoveAmount * rotateSpeed);
+        transform.rotation = targetRotation;
         
-        HandleMovementAnimations();
+        Anim.SetBool("lockOn", LockOn);
+        
+        if (LockOn )
+            HandleLockOnAnimations(MoveDirection);
+        else
+            HandleMovementAnimations();
     }
 
     public void Tick(float d)
@@ -171,6 +174,16 @@ public class StateManager : MonoBehaviour
     {
         Anim.SetBool("run", Running);
         Anim.SetFloat("vertical", MoveAmount, 0.4f, Delta);
+    }
+
+    private void HandleLockOnAnimations(Vector3 moveDir)
+    {
+        Vector3 relativeDir = transform.InverseTransformDirection(moveDir);
+        float h = relativeDir.x;
+        float v = relativeDir.z;
+        
+        Anim.SetFloat("vertical", v, 0.4f, Delta);
+        Anim.SetFloat("horizontal", h, 0.4f, Delta);
     }
 
     public void DetectAction()
