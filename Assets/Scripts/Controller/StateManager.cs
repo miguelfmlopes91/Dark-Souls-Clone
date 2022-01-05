@@ -60,6 +60,7 @@ public class StateManager : MonoBehaviour
     
     [Header("Other")] 
     public EnemyTarget LockOnTarget;
+    public AnimationCurve roll_curve;
     
     public float Delta { get; private set; }
     private float _actionDelay;
@@ -131,6 +132,7 @@ public class StateManager : MonoBehaviour
             return;
         
         _animatorHook.RootMotionMultiplier = 1f;//reset root motion before checking for rolls
+        _animatorHook.CloseRoll();
         HandleRolls();
         
 
@@ -217,10 +219,14 @@ public class StateManager : MonoBehaviour
                 MoveDirection = transform.forward;
             Quaternion targetRot = Quaternion.LookRotation(MoveDirection);
             transform.rotation = targetRot;
+            _animatorHook.InitForRoll();
+            _animatorHook.RootMotionMultiplier = rollSpeed;
+        }
+        else
+        {
+            _animatorHook.RootMotionMultiplier = 1.3f;
         }
 
-        _animatorHook.RootMotionMultiplier = rollSpeed;
-        
         Anim.SetFloat("vertical", v);
         Anim.SetFloat("horizontal", h);
         

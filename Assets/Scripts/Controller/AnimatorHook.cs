@@ -11,13 +11,31 @@ namespace Controller
         private Animator _animator;
         private StateManager _stateManager;
         public float RootMotionMultiplier { get; set; }
-
+        private bool rolling;
+        private float roll_t;
+        
         public void Init(StateManager st)//TODO: dependency injection
         {
             _stateManager = st;
             _animator = _stateManager.Anim;
         }
 
+        public void InitForRoll()
+        {
+            rolling = true;
+            roll_t = 0f;
+        }
+
+        public void CloseRoll()
+        {
+            if (!rolling)
+                return;
+
+            RootMotionMultiplier = 1;
+            roll_t = 0f;
+            rolling = false;
+        }
+        
         void OnAnimatorMove()
         {
             if (_stateManager.CanMove)
@@ -27,11 +45,29 @@ namespace Controller
 
             if (RootMotionMultiplier == 0) 
                 RootMotionMultiplier = 1;
-            
-            Vector3 delta = _animator.deltaPosition;
-            delta.y = 0;
-            Vector3 v = (delta * RootMotionMultiplier) / _stateManager.Delta;
-            _stateManager.RgBody.velocity = v;
+
+            if (!rolling)
+            {
+                Vector3 delta = _animator.deltaPosition;
+                delta.y = 0;
+                Vector3 v = (delta * RootMotionMultiplier) / _stateManager.Delta;
+                _stateManager.RgBody.velocity = v;
+            }
+            else
+            {
+                //sample the curve
+                roll_t += _stateManager.Delta / 0.5f;
+                if (roll_t > 1)
+                {
+                    roll_t = 1;
+                }
+                float zValue = _stateManager.roll_curve.Evaluate(roll_t);
+                
+                Vector3 v1 = Vector3.forward * zValue;
+                Vector3 relative = transform.TransformDirection(v1);
+                Vector3 v2 = (relative * RootMotionMultiplier);
+                _stateManager.RgBody.velocity = v2;
+            }
         }
     }
 }

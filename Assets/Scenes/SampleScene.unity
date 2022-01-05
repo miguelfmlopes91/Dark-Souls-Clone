@@ -811,7 +811,50 @@ MonoBehaviour:
   runSpeed: 5.5
   rotateSpeed: 5
   toGround: 0.5
+  rollSpeed: 1
   LockOnTarget: {fileID: 2118279145}
+  roll_curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.06815611
+      value: 0.9872621
+      inSlope: 0.43397614
+      outSlope: 0.43397614
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.28526688
+      value: 0.6223569
+      inSlope: 0.6375831
+      outSlope: 0.6375831
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.31511068
+    - serializedVersion: 3
+      time: 0.94970703
+      value: 0.34537888
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   ignoreLayers:
     serializedVersion: 2
     m_Bits: 0
