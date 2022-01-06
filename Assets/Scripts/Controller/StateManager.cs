@@ -13,6 +13,7 @@ public class StateManager : MonoBehaviour
     public Animator Anim { get; private set; }
     public Rigidbody RgBody { get; private set; }
     private AnimatorHook _animatorHook;
+    [HideInInspector]public ActionManager ActionManager;
     
     [field: Header("inputs")]
     public float Horizontal { get; set; } 
@@ -76,6 +77,10 @@ public class StateManager : MonoBehaviour
         RgBody.drag = 4f;
         RgBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
+
+        ActionManager = GetComponent<ActionManager>();
+        ActionManager.Init();
+        
         _animatorHook = _activeModel.AddComponent<AnimatorHook>();
         _animatorHook.Init(this);
         
@@ -248,19 +253,12 @@ public class StateManager : MonoBehaviour
         if (rb == false && rt == false && lt == false && lb == false)
             return;
 
-        string targetAnimaton = null;
-
-        if (rb)
-            targetAnimaton = "oh_attack_1";
-        if (rt)
-            targetAnimaton = "oh_attack_2";
-        if (lt)
-            targetAnimaton = "oh_attack_3";
-        if (lb)
-            targetAnimaton = "th_attack_1";
-
-        if (string.IsNullOrEmpty(targetAnimaton))
-            return;
+        
+        Action action = ActionManager.GetActionSlot(this);
+        if (action == null) return;
+        
+        string targetAnimaton = action.targetAnimation;
+        if (string.IsNullOrEmpty(targetAnimaton)) return;
 
         CanMove = false;
         inAction = true;
