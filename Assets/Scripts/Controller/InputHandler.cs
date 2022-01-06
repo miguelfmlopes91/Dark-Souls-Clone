@@ -25,6 +25,9 @@ namespace Controller
         private bool leftAxis_down;
         private bool rightAxis_down;
 
+        private float b_timer;
+        private float rt_timer;
+
         private StateManager _stateManager;
         private CameraManager _cameraManager;
         void Start()
@@ -48,6 +51,7 @@ namespace Controller
         {
             delta = Time.deltaTime;
             _stateManager.Tick(delta);
+            ResetInputAndStates();
         }
 
         private void GetInput()
@@ -71,7 +75,9 @@ namespace Controller
             rb_Input = Input.GetButton ("RB");
             lb_Input = Input.GetButton ("LB");
             rightAxis_down = Input.GetButtonUp ("L");
-            
+
+            if (b_Input)
+                b_timer += delta;
         }
 
         private void UpdateStates()
@@ -84,16 +90,14 @@ namespace Controller
             _stateManager.MoveDirection = (v + h).normalized;
             float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
             _stateManager.MoveAmount = Mathf.Clamp01(m);
+            
+            if (b_Input && b_timer > 0.5f)
+            {
+                _stateManager.Running = (_stateManager.MoveAmount > 0);
+            }
 
-            _stateManager.RollInput = b_Input;
-            if (b_Input)
-            {
-                //_stateManager.Running = _stateManager.MoveAmount > 0;
-            }
-            else
-            {
-                //_stateManager.Running = false;
-            }
+            if (!b_Input && b_timer > 0 && b_timer < 0.5f)
+                _stateManager.RollInput = true;
 
             _stateManager.rt = rt_Input;
             _stateManager.lt = lt_Input;
@@ -118,6 +122,16 @@ namespace Controller
                 _stateManager.LockOnTransform = _cameraManager.lockOnTargetTransform;
                 _cameraManager.LockOn = _stateManager.LockOn;
             }
+        }
+
+        private void ResetInputAndStates()
+        {
+            if (!b_Input)
+                b_timer = 0;
+            if (_stateManager.RollInput)
+                _stateManager.RollInput = false;
+            if (_stateManager.Running)
+                _stateManager.Running = false; 
         }
     }
 }
