@@ -14,6 +14,7 @@ public class StateManager : MonoBehaviour
     public Rigidbody RgBody { get; private set; }
     private AnimatorHook _animatorHook;
     [HideInInspector]public ActionManager ActionManager;
+    [HideInInspector]public InventoryManager InventoryManager;
     
     [field: Header("inputs")]
     public float Horizontal { get; set; } 
@@ -77,9 +78,11 @@ public class StateManager : MonoBehaviour
         RgBody.drag = 4f;
         RgBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
+        InventoryManager = GetComponent<InventoryManager>();
+        InventoryManager.Init();
 
         ActionManager = GetComponent<ActionManager>();
-        ActionManager.Init();
+        ActionManager.Init(this);
         
         _animatorHook = _activeModel.AddComponent<AnimatorHook>();
         _animatorHook.Init(this);
@@ -269,6 +272,10 @@ public class StateManager : MonoBehaviour
     public void HandleTwoHanded()
     {
         Anim.SetBool("two_handed", IsTwoHanded);
+        if(IsTwoHanded)
+            ActionManager.UpdateActionsTwoHanded();
+        else
+            ActionManager.UpdateActionsOneHanded();
     }
 }
 }

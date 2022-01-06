@@ -7,7 +7,7 @@ namespace Controller
     public class ActionManager : MonoBehaviour
     {
         public List<Action> actionSlots = new List<Action>();
-
+        private StateManager _stateManager;
         public ActionManager()
         {
             for (int i = 0; i < 4; i++)
@@ -17,9 +17,41 @@ namespace Controller
                 actionSlots.Add(a);
             }
         }
-        public void Init()
+        public void Init(StateManager stateManager)
         {
-            
+            _stateManager = stateManager;
+            UpdateActionsOneHanded();
+        }
+
+        public void UpdateActionsOneHanded()
+        {
+            EmptyAllSlots();
+            Weapon weapon = _stateManager.InventoryManager.currentWeapon;
+            for (int i = 0; i < weapon .actions.Count ; i++)
+            {
+                Action action = GetAction(weapon.actions[i].input);
+                action.targetAnimation = weapon.actions[i].targetAnimation;
+            }
+        }
+        
+        public void UpdateActionsTwoHanded()
+        {
+            EmptyAllSlots();
+            Weapon weapon = _stateManager.InventoryManager.currentWeapon;
+            for (int i = 0; i < weapon .twoHandedActions.Count ; i++)
+            {
+                Action action = GetAction(weapon.twoHandedActions[i].input);
+                action.targetAnimation = weapon.twoHandedActions[i].targetAnimation;
+            }
+        }
+
+        private void EmptyAllSlots()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                Action a = GetAction((ActionInput)i);
+                a.targetAnimation = null;
+            }
         }
 
         public Action GetActionSlot(StateManager stateManager)
