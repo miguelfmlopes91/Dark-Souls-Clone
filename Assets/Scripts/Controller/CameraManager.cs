@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Enemies;
 using UnityEngine;
 
 
@@ -18,13 +19,17 @@ namespace Controller
         private float smoothY;
         private float smoothXVelocity;
         private float smoothYVelocity;
+        private bool usedRightAxis;
+        private StateManager _stateManager;
+        
         [SerializeField]private float minAngle = -35f;
         [SerializeField]private float maxAngle = 35f;
         [SerializeField] private float lookAngle;
         [SerializeField] private float tiltAngle;
         
         public Transform target;
-        public Transform lockOnTarget;
+        public EnemyTarget lockOnTarget;
+        public Transform lockOnTargetTransform;
         
         [HideInInspector] public Transform pivot;
         [HideInInspector] public Transform camTrans;
@@ -32,9 +37,10 @@ namespace Controller
         public static CameraManager Instance { get; private set; }
 
 
-        public void Init(Transform t)
+        public void Init(StateManager stateManager)
         {
-            target = t;
+            _stateManager = stateManager;
+            target = _stateManager.transform;
             camTrans = Camera.main.transform;
             pivot = camTrans.parent;
         }
@@ -48,6 +54,30 @@ namespace Controller
             float c_v = Input.GetAxis("RightAxis Y");
 
             float targetSpeed = mouseSpeed;
+
+            if (lockOnTarget != null && lockOnTargetTransform == null)
+            {
+                lockOnTargetTransform = lockOnTarget.GetTarget();
+                _stateManager.LockOnTransform = lockOnTargetTransform;
+                if (Mathf.Abs(c_h) > 0.6f) 
+                {
+                    if (!usedRightAxis)
+                    {
+                        lockOnTargetTransform = lockOnTarget.GetTarget((c_h > 0));
+                        _stateManager.LockOnTransform = lockOnTargetTransform;
+                        usedRightAxis = true;
+                    }
+                }
+            }
+
+            if (usedRightAxis)
+            {
+                if (Mathf.Abs(c_h) < 0.6f)
+                {
+                    usedRightAxis = false;
+                }
+            }
+            
             if (c_h != 0 || c_v != 0)
             {
                 h = c_h;
@@ -87,7 +117,7 @@ namespace Controller
             if (LockOn && lockOnTarget != null)
             {
                 //directions towards lockOn target
-                Vector3 targetDir = lockOnTarget.position - transform.position;
+                Vector3 targetDir = lockOnTargetTransform.position - transform.position;
                 targetDir.Normalize();
                 //targetDir.y = 0;
                 if (targetDir == Vector3.zero)

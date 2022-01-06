@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,16 +8,43 @@ namespace Enemies
 {
 public class EnemyTarget : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public int index;
+    public List<Transform> targets = new List<Transform>();
+    public List<HumanBodyBones> HumanBodyBonesList = new List<HumanBodyBones>();
+    private Animator _animator;
+
+    private void Start()
     {
-    
+        _animator = GetComponent<Animator>();
+        if (!_animator.isHuman)
+            return;
+        foreach (HumanBodyBones bones in HumanBodyBonesList)
+        {
+            targets.Add(_animator.GetBoneTransform(bones));
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public Transform GetTarget(bool negative = false)
     {
-    
+        if (targets.Count == 0) return transform;
+        
+        if (!negative)
+        {
+            if (index < targets.Count - 1)
+                index++;
+            else
+                index = 0;
+        }
+        else
+        {
+            if (index < 0)
+                index = targets.Count - 1;
+            else
+                index--;
+        }
+
+        index = Mathf.Clamp(index, 0, targets.Count);
+        return targets[index];
     }
 }
 }

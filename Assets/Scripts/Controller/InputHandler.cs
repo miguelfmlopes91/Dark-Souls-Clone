@@ -32,7 +32,7 @@ namespace Controller
             _stateManager = GetComponent<StateManager>();
             _stateManager.Init();
             _cameraManager = CameraManager.Instance;
-            _cameraManager.Init(transform);
+            _cameraManager.Init(_stateManager);
         }
 
         void FixedUpdate()
@@ -114,7 +114,8 @@ namespace Controller
                     _stateManager.LockOn = false;
                 }
 
-                _cameraManager.lockOnTarget = _stateManager.LockOnTarget.transform;
+                _cameraManager.lockOnTarget = _stateManager.LockOnTarget;
+                _stateManager.LockOnTransform = _cameraManager.lockOnTargetTransform;
                 _cameraManager.LockOn = _stateManager.LockOn;
             }
         }

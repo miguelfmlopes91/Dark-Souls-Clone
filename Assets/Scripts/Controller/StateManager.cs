@@ -60,6 +60,7 @@ public class StateManager : MonoBehaviour
     
     [Header("Other")] 
     public EnemyTarget LockOnTarget;
+    public Transform LockOnTransform;
     public AnimationCurve roll_curve;
     
     public float Delta { get; private set; }
@@ -152,7 +153,12 @@ public class StateManager : MonoBehaviour
 
 
         //apply real rotation to model
-        Vector3 targetDir = (LockOn == false) ? MoveDirection : LockOnTarget.transform.position - transform.position;
+        Vector3 targetDir = (LockOn == false) ? 
+            MoveDirection 
+            : (LockOnTransform != null) ? 
+                LockOnTransform.position - transform.position 
+                : MoveDirection;
+        
         targetDir.y = 0;
         if (targetDir == Vector3.zero)
             targetDir = transform.forward;
