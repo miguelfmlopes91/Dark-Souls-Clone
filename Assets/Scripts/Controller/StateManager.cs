@@ -23,7 +23,7 @@ public class StateManager : MonoBehaviour
     public Vector3 MoveDirection { get; set; }
     public bool rt, rb, lt, lb; //TODO: have some enums
     public bool RollInput { get;  set; }
-
+    public bool ItemInput { get; set; }
 
     [Header("Stats")] 
     [SerializeField] private float moveSpeed = 2f;
@@ -59,6 +59,7 @@ public class StateManager : MonoBehaviour
         }
         set => onGround = value;
     }
+    public bool UsingItem { get; set; }
     
     [Header("Other")] 
     public EnemyTarget LockOnTarget;
@@ -117,8 +118,11 @@ public class StateManager : MonoBehaviour
     public void FixedTick(float d)
     {
         Delta = d;
-        
+
+        UsingItem = Anim.GetBool("interacting");
+        DetectItemAction();
         DetectAction();
+        InventoryManager.currentWeapon.weaponModel.SetActive(!UsingItem);
 
         if (inAction)
         {
@@ -150,6 +154,13 @@ public class StateManager : MonoBehaviour
         
         //apply movement to the model
         float targetSpeed = moveSpeed;
+
+        if (UsingItem)
+        {
+            Running = false;
+            MoveAmount = Mathf.Clamp(MoveAmount, 0, 0.45f);
+        }
+        
         if (Running)
         {
             targetSpeed = runSpeed;
@@ -207,7 +218,7 @@ public class StateManager : MonoBehaviour
 
     private void HandleRolls()
     {
-        if (!RollInput)
+        if (!RollInput || UsingItem)
             return;
 
         float v = Vertical;
@@ -249,9 +260,23 @@ public class StateManager : MonoBehaviour
         Anim.CrossFade("Rolls", 0.2f);
     }
 
+    public void DetectItemAction()
+    {
+        if (!CanMove || UsingItem) return;
+        if (!ItemInput) return;
+
+        ItemAction slot = ActionManager.consumableItem;
+        string targetAnimaton = slot.targetAnimation;
+        
+        if (string.IsNullOrEmpty(targetAnimaton)) return;
+
+        UsingItem = true;
+        Anim.CrossFade(targetAnimaton, 0.2f);
+    }
+
     public void DetectAction()
     {
-        if (CanMove == false) return;
+        if (!CanMove && UsingItem) return;
 
         if (rb == false && rt == false && lt == false && lb == false)
             return;
@@ -265,7 +290,7 @@ public class StateManager : MonoBehaviour
 
         CanMove = false;
         inAction = true;
-        Anim.CrossFade(targetAnimaton, 0.2f);
+        Anim.Play(targetAnimaton);
         //_rigidbody.velocity = Vector3.zero;
     }
 

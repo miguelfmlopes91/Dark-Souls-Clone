@@ -19,6 +19,7 @@ namespace Controller
     {
         public List<Action> actions;
         public List<Action> twoHandedActions;
+        public GameObject weaponModel;
     }
 }
 

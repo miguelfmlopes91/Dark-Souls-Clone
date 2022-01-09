@@ -90,6 +90,9 @@ namespace Controller
             _stateManager.MoveDirection = (v + h).normalized;
             float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
             _stateManager.MoveAmount = Mathf.Clamp01(m);
+
+            if (x_Input)
+                b_Input = false;
             
             if (b_Input && b_timer > 0.5f)
             {
@@ -99,6 +102,7 @@ namespace Controller
             if (!b_Input && b_timer > 0 && b_timer < 0.5f)
                 _stateManager.RollInput = true;
 
+            _stateManager.ItemInput = x_Input;
             _stateManager.rt = rt_Input;
             _stateManager.lt = lt_Input;
             _stateManager.rb = rb_Input;

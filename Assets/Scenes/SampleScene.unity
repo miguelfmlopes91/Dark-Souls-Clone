@@ -890,6 +890,9 @@ MonoBehaviour:
     targetAnimation: 
   - input: 3
     targetAnimation: 
+  consumableItem:
+    targetAnimation: use_item
+    item_id: 
 --- !u!114 &1089942498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -915,6 +918,7 @@ MonoBehaviour:
       targetAnimation: th_attack_1
     - input: 2
       targetAnimation: th_attack_2
+    weaponModel: {fileID: 1505970916}
 --- !u!1 &1317896039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1023,6 +1027,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 400094, guid: f9a132340c07fed49b4f4a7822451aab, type: 3}
   m_PrefabInstance: {fileID: 1466157401}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1505970916 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 704ced9c989b0e942bda413efdb7d993, type: 3}
+  m_PrefabInstance: {fileID: 746612278}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1516003917
 GameObject:

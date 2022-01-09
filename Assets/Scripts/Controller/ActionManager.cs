@@ -7,6 +7,8 @@ namespace Controller
     public class ActionManager : MonoBehaviour
     {
         public List<Action> actionSlots = new List<Action>();
+        public ItemAction consumableItem;
+        
         private StateManager _stateManager;
         public ActionManager()
         {
@@ -91,11 +93,19 @@ namespace Controller
     {
         rb, lb, rt, lt
     }
+    
     [System.Serializable]
     public class Action
     {
         public ActionInput input;
         public string targetAnimation;
+    }
+
+    [System.Serializable]
+    public class ItemAction
+    {
+        public string targetAnimation;
+        public string item_id;
     }
 }
 
