@@ -42,7 +42,7 @@ namespace Enemies
                 isInvincible = !CanMove;
             }
 
-            if (!CanMove)
+            if (CanMove)
             {
                 Anim.applyRootMotion = false;
             }

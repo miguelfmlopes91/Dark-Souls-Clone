@@ -35,7 +35,7 @@ namespace Controller
             {
                 _animator = _enemyStates.Anim;
                 _rgBody = _enemyStates._Rigidbody;
-                _animationCurve = _enemyStates.roll_curve;
+                //_animationCurve = _enemyStates.roll_curve;
                 delta = _enemyStates.delta;
             }
         }
@@ -62,13 +62,13 @@ namespace Controller
             if (_rgBody == null) return;
             if (_stateManager != null)
             {
-                if( !_stateManager.CanMove) return;
+                if(_stateManager.CanMove) return;
                 delta = _stateManager.Delta;
             }
 
             if (_enemyStates != null)
             {
-                if(!_enemyStates.CanMove) return;
+                if(_enemyStates.CanMove) return;
                 delta = _enemyStates.delta;
             } 
 
