@@ -36,10 +36,10 @@ namespace Controller
             rolling = false;
         }
         
-        void OnAnimatorMove()
+        private void OnAnimatorMove()
         {
-            if (_stateManager.CanMove)
-                return;
+            if (_stateManager == null) return;
+            if (_stateManager.CanMove) return;
 
             _stateManager.RgBody.drag = 0;//we don't want drag cus we moving with motions
 
@@ -68,6 +68,18 @@ namespace Controller
                 Vector3 v2 = (relative * RootMotionMultiplier);
                 _stateManager.RgBody.velocity = v2;
             }
+        }
+
+        public void OpenDamageColliders()
+        {
+            if (_stateManager == null) return;
+            _stateManager.InventoryManager.currentWeapon.w_hook.OpenDamageColliders();
+        }
+
+        public void CloseDamageColliders()
+        {
+            if (_stateManager == null) return;
+            _stateManager.InventoryManager.currentWeapon.w_hook.CloseDamageColliders();
         }
     }
 }

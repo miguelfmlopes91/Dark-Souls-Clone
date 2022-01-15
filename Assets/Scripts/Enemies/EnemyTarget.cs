@@ -13,9 +13,9 @@ public class EnemyTarget : MonoBehaviour
     public List<HumanBodyBones> HumanBodyBonesList = new List<HumanBodyBones>();
     private Animator _animator;
 
-    private void Start()
+    public void Init(Animator animator)
     {
-        _animator = GetComponent<Animator>();
+        _animator = animator;
         if (!_animator.isHuman)
             return;
         foreach (HumanBodyBones bones in HumanBodyBonesList)

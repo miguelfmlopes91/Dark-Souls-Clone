@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Items;
 using UnityEngine;
 
 namespace Controller
@@ -10,7 +11,7 @@ namespace Controller
         
         public void Init()
         {
-
+            currentWeapon.w_hook.CloseDamageColliders();
         }
     }
 
@@ -20,6 +21,7 @@ namespace Controller
         public List<Action> actions;
         public List<Action> twoHandedActions;
         public GameObject weaponModel;
+        public WeaponHook w_hook;
     }
 }
 
