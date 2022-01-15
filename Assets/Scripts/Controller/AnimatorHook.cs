@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Enemies;
 using UnityEngine;
 
 
@@ -10,14 +11,33 @@ namespace Controller
     {
         private Animator _animator;
         private StateManager _stateManager;
+        private Rigidbody _rgBody;
+        private EnemyStates _enemyStates;
+        private AnimationCurve _animationCurve;
         public float RootMotionMultiplier { get; set; }
         private bool rolling;
         private float roll_t;
+        private float delta;
         
-        public void Init(StateManager st)//TODO: dependency injection
+        public void Init(StateManager st, EnemyStates enemyStates)//TODO: dependency injection
         {
             _stateManager = st;
-            _animator = _stateManager.Anim;
+            _enemyStates = enemyStates;
+            if (_stateManager != null)
+            {
+                _animator = _stateManager.Anim;
+                _rgBody = _stateManager.RgBody;
+                _animationCurve = _stateManager.roll_curve;
+                delta = _stateManager.Delta;
+            }
+
+            if (_enemyStates != null)
+            {
+                _animator = _enemyStates.Anim;
+                _rgBody = _enemyStates._Rigidbody;
+                _animationCurve = _enemyStates.roll_curve;
+                delta = _enemyStates.delta;
+            }
         }
 
         public void InitForRoll()
@@ -38,35 +58,48 @@ namespace Controller
         
         private void OnAnimatorMove()
         {
-            if (_stateManager == null) return;
-            if (_stateManager.CanMove) return;
+            if (_stateManager == null && _enemyStates == null) return;
+            if (_rgBody == null) return;
+            if (_stateManager != null)
+            {
+                if( !_stateManager.CanMove) return;
+                delta = _stateManager.Delta;
+            }
 
-            _stateManager.RgBody.drag = 0;//we don't want drag cus we moving with motions
+            if (_enemyStates != null)
+            {
+                if(!_enemyStates.CanMove) return;
+                delta = _enemyStates.delta;
+            } 
+
+            _rgBody.drag = 0;//we don't want drag cus we moving with motions
 
             if (RootMotionMultiplier == 0) 
                 RootMotionMultiplier = 1;
 
             if (!rolling)
             {
-                Vector3 delta = _animator.deltaPosition;
-                delta.y = 0;
-                Vector3 v = (delta * RootMotionMultiplier) / _stateManager.Delta;
-                _stateManager.RgBody.velocity = v;
+                Vector3 delta2 = _animator.deltaPosition;
+                delta2.y = 0;
+                Vector3 v = (delta2 * RootMotionMultiplier) / delta;
+                _rgBody.velocity = v;
             }
             else
             {
                 //sample the curve
-                roll_t += _stateManager.Delta / 0.5f;
+                roll_t += delta / 0.5f;
                 if (roll_t > 1)
                 {
                     roll_t = 1;
                 }
-                float zValue = _stateManager.roll_curve.Evaluate(roll_t);
+                
+                if (_stateManager == null) return;
+                float zValue = _animationCurve.Evaluate(roll_t);
                 
                 Vector3 v1 = Vector3.forward * zValue;
                 Vector3 relative = transform.TransformDirection(v1);
                 Vector3 v2 = (relative * RootMotionMultiplier);
-                _stateManager.RgBody.velocity = v2;
+                _rgBody.velocity = v2;
             }
         }
 

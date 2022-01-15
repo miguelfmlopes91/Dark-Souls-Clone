@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Controller;
 using Enemies;
 using UnityEngine;
 
@@ -10,21 +11,40 @@ namespace Enemies
     {
         public float health;
         public bool isInvincible;
-        private Animator _animator;
+        public bool CanMove;
+        public Animator Anim;
         private EnemyTarget _enemyTarget;
+        private AnimatorHook _animatorHook;
+        public Rigidbody _Rigidbody;
+        public AnimationCurve roll_curve { get; set; }
+        public float delta { get; set; }
 
         private void Start()
         {
-            _animator = GetComponentInChildren<Animator>();
+            Anim = GetComponentInChildren<Animator>();
             _enemyTarget = GetComponent<EnemyTarget>();
-            _enemyTarget.Init(_animator);
+            _enemyTarget.Init(Anim);
+
+            _Rigidbody = GetComponent<Rigidbody>();
+            
+            _animatorHook = Anim.GetComponent<AnimatorHook>();
+            if (_animatorHook == null)
+                _animatorHook = Anim.gameObject.AddComponent<AnimatorHook>();
+            _animatorHook.Init(null, this);
         }
 
         private void Update()
         {
+            delta = Time.deltaTime;
+            CanMove = Anim.GetBool("canMove");
             if (isInvincible)
             {
-                isInvincible = !_animator.GetBool("canMove");    
+                isInvincible = !CanMove;
+            }
+
+            if (!CanMove)
+            {
+                Anim.applyRootMotion = false;
             }
             
         }
@@ -35,7 +55,8 @@ namespace Enemies
                 return;
             health -= v;
             isInvincible = true;
-            _animator.Play("damage_1");
+            Anim.Play("damage_1");
+            Anim.applyRootMotion = true;
         }
     }
 }

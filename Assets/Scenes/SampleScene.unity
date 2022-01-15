@@ -745,6 +745,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isInvincible: 0
+  CanMove: 0
+  Anim: {fileID: 0}
+  _Rigidbody: {fileID: 0}
 --- !u!4 &905801405
 Transform:
   m_ObjectHideFlags: 0
@@ -1195,9 +1198,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 2.5324907
+  m_Height: 2
   m_Direction: 1
-  m_Center: {x: -0, y: 0.76624537, z: 0}
+  m_Center: {x: -0, y: 1, z: 0}
 --- !u!114 &1466157406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1210,6 +1213,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f83e5513d65274e7e9b922304de44815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &1466157407
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466157404}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 999
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &1505970916 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 704ced9c989b0e942bda413efdb7d993, type: 3}

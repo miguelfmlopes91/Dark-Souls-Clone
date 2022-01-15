@@ -84,9 +84,11 @@ public class StateManager : MonoBehaviour
 
         ActionManager = GetComponent<ActionManager>();
         ActionManager.Init(this);
-        
-        _animatorHook = _activeModel.AddComponent<AnimatorHook>();
-        _animatorHook.Init(this);
+
+        _animatorHook = _activeModel.GetComponent<AnimatorHook>();
+        if (_animatorHook == null)
+            _animatorHook = _activeModel.AddComponent<AnimatorHook>();
+        _animatorHook.Init(this, null);
         
         gameObject.layer = 8;
         ignoreLayers = ~(1 << 9);
