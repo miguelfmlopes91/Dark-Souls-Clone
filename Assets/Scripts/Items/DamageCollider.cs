@@ -16,7 +16,7 @@ namespace Items
             if (_states == null)
                 return;
             
-            _states.DoDamage(5);
+            _states.DoDamage(35);
         }
     }
 }

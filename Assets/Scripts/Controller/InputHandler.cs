@@ -114,13 +114,25 @@ namespace Controller
                 _stateManager.HandleTwoHanded();
             }
 
+            if (_stateManager.LockOnTarget != null)
+            {
+                if (_stateManager.LockOnTarget._EnemyStates.isDead)
+                {
+                    _stateManager.LockOn = false;
+                    _stateManager.LockOnTarget = null;
+                    _stateManager.LockOnTransform = null;
+                    _cameraManager.LockOn = false;
+                    _cameraManager.lockOnTarget = null;
+                } 
+            }
+
+
             if (rightAxis_down)
             {
                 _stateManager.LockOn = !_stateManager.LockOn;
                 if (_stateManager.LockOnTarget == null)
-                {
                     _stateManager.LockOn = false;
-                }
+
 
                 _cameraManager.lockOnTarget = _stateManager.LockOnTarget;
                 _stateManager.LockOnTransform = _cameraManager.lockOnTargetTransform;
