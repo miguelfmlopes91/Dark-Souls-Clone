@@ -106,8 +106,7 @@ namespace Controller
         public void OpenDamageColliders()
         {
             if (_stateManager == null) return;
-            //_stateManager.InventoryManager.RightHandWeapon.w_hook.OpenDamageColliders();
-            _stateManager.InventoryManager.CloseAllDamageColliders();
+            _stateManager.InventoryManager.OpenAllDamageColliders();
         }
 
         public void CloseDamageColliders()

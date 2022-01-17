@@ -282,7 +282,6 @@ public class StateManager : MonoBehaviour
 
         if (rb == false && rt == false && lt == false && lb == false)
             return;
-
         
         Action action = ActionManager.GetActionSlot(this);
         if (action == null) return;

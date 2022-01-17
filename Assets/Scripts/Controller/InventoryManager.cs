@@ -22,6 +22,13 @@ namespace Controller
             if(LeftHandWeapon.w_hook != null)
                 LeftHandWeapon.w_hook.CloseDamageColliders();
         }
+        
+        public void OpenAllDamageColliders(){
+            if(RightHandWeapon.w_hook != null)
+                RightHandWeapon.w_hook.OpenDamageColliders();
+            if(LeftHandWeapon.w_hook != null)
+                LeftHandWeapon.w_hook.OpenDamageColliders();
+        }
     }
     
     [System.Serializable]
