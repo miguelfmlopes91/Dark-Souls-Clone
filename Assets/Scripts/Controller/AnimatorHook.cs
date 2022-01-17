@@ -106,13 +106,14 @@ namespace Controller
         public void OpenDamageColliders()
         {
             if (_stateManager == null) return;
-            _stateManager.InventoryManager.currentWeapon.w_hook.OpenDamageColliders();
+            //_stateManager.InventoryManager.RightHandWeapon.w_hook.OpenDamageColliders();
+            _stateManager.InventoryManager.CloseAllDamageColliders();
         }
 
         public void CloseDamageColliders()
         {
             if (_stateManager == null) return;
-            _stateManager.InventoryManager.currentWeapon.w_hook.CloseDamageColliders();
+            _stateManager.InventoryManager.CloseAllDamageColliders();
         }
     }
 }

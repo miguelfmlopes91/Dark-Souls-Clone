@@ -28,18 +28,40 @@ namespace Controller
         public void UpdateActionsOneHanded()
         {
             EmptyAllSlots();
-            Weapon weapon = _stateManager.InventoryManager.currentWeapon;
+            if (_stateManager.InventoryManager.hasLeftHandWeapon)
+            {
+                UpdateActionsLeftHanded();
+                return;
+            }
+            Weapon weapon = _stateManager.InventoryManager.RightHandWeapon;
             for (int i = 0; i < weapon .actions.Count ; i++)
             {
                 Action action = GetAction(weapon.actions[i].input);
                 action.targetAnimation = weapon.actions[i].targetAnimation;
             }
         }
+
+        public void UpdateActionsLeftHanded()
+        {
+            Weapon r_weapon = _stateManager.InventoryManager.RightHandWeapon;
+            Weapon l_weapon = _stateManager.InventoryManager.LeftHandWeapon;
+
+            var rb = GetAction(ActionInput.rb);
+            var rt = GetAction(ActionInput.rt);
+            rb.targetAnimation = r_weapon.GetAction(r_weapon.actions, ActionInput.rb).targetAnimation;
+            rt.targetAnimation = r_weapon.GetAction(r_weapon.actions, ActionInput.rt).targetAnimation;
+            var lb = GetAction(ActionInput.lb);
+            var lt = GetAction(ActionInput.lt);
+            lb.targetAnimation = l_weapon.GetAction(l_weapon.actions, ActionInput.rb).targetAnimation;
+            lt.targetAnimation = l_weapon.GetAction(l_weapon.actions, ActionInput.rt).targetAnimation;
+            lb.mirror = true;
+            lt.mirror = true;
+        }
         
         public void UpdateActionsTwoHanded()
         {
             EmptyAllSlots();
-            Weapon weapon = _stateManager.InventoryManager.currentWeapon;
+            Weapon weapon = _stateManager.InventoryManager.RightHandWeapon;
             for (int i = 0; i < weapon .twoHandedActions.Count ; i++)
             {
                 Action action = GetAction(weapon.twoHandedActions[i].input);
@@ -53,6 +75,7 @@ namespace Controller
             {
                 Action a = GetAction((ActionInput)i);
                 a.targetAnimation = null;
+                a.mirror = false;
             }
         }
 
@@ -99,6 +122,7 @@ namespace Controller
     {
         public ActionInput input;
         public string targetAnimation;
+        public bool mirror;
     }
 
     [System.Serializable]

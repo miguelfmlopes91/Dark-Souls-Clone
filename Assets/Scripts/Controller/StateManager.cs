@@ -124,7 +124,7 @@ public class StateManager : MonoBehaviour
         UsingItem = Anim.GetBool("interacting");
         DetectItemAction();
         DetectAction();
-        InventoryManager.currentWeapon.weaponModel.SetActive(!UsingItem);
+        InventoryManager.RightHandWeapon.weaponModel.SetActive(!UsingItem);
 
         if (inAction)
         {
@@ -292,6 +292,7 @@ public class StateManager : MonoBehaviour
 
         CanMove = false;
         inAction = true;
+        Anim.SetBool("mirror", action.mirror);
         Anim.Play(targetAnimaton);
         //_rigidbody.velocity = Vector3.zero;
     }
