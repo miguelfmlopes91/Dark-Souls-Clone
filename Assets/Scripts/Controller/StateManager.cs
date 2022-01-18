@@ -80,7 +80,7 @@ public class StateManager : MonoBehaviour
         RgBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         InventoryManager = GetComponent<InventoryManager>();
-        InventoryManager.Init();
+        InventoryManager.Init(this);
 
         ActionManager = GetComponent<ActionManager>();
         ActionManager.Init(this);

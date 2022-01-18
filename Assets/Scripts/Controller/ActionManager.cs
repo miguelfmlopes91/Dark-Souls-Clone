@@ -54,8 +54,12 @@ namespace Controller
             var lt = GetAction(ActionInput.lt);
             lb.targetAnimation = l_weapon.GetAction(l_weapon.actions, ActionInput.rb).targetAnimation;
             lt.targetAnimation = l_weapon.GetAction(l_weapon.actions, ActionInput.rt).targetAnimation;
-            lb.mirror = true;
-            lt.mirror = true;
+            
+            if (l_weapon.LeftHandMirror)
+            {
+                lb.mirror = true;
+                lt.mirror = true;
+            }
         }
         
         public void UpdateActionsTwoHanded()

@@ -1632,6 +1632,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RightHandWeapon:
+    oh_idle: oh_idle
+    th_idle: th_idle
     actions:
     - input: 0
       targetAnimation: oh_attack_1
@@ -1644,6 +1646,8 @@ MonoBehaviour:
     weaponModel: {fileID: 1505970916}
     w_hook: {fileID: 1505970917}
   LeftHandWeapon:
+    oh_idle: oh_idle
+    th_idle: th_idle
     actions:
     - input: 0
       targetAnimation: oh_attack_1
@@ -1652,7 +1656,7 @@ MonoBehaviour:
       targetAnimation: oh_attack_3
       mirror: 0
     twoHandedActions: []
-    LeftHandMirror: 0
+    LeftHandMirror: 1
     weaponModel: {fileID: 572221189}
     w_hook: {fileID: 572221190}
   hasLeftHandWeapon: 1

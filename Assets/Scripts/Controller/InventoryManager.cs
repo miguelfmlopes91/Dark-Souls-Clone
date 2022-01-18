@@ -11,9 +11,25 @@ namespace Controller
         public Weapon RightHandWeapon;
         public Weapon LeftHandWeapon;
         public bool hasLeftHandWeapon = true;
-        public void Init()
+
+        private StateManager _stateManager;
+        
+        public void Init(StateManager st)
         {
+            _stateManager = st;
+            EquipWeapon(RightHandWeapon);
+            EquipWeapon(RightHandWeapon, true);
             CloseAllDamageColliders();
+        }
+
+        public void EquipWeapon(Weapon w, bool isLeft = false)
+        {
+            string targetIdle = w.oh_idle;
+            targetIdle += (isLeft) ? "_l" : "_r";
+            _stateManager.Anim.SetBool("mirror", isLeft);
+            _stateManager.Anim.Play("changeWeapon");
+            _stateManager.Anim.Play(targetIdle);
+
         }
         
         public void CloseAllDamageColliders(){
@@ -34,9 +50,13 @@ namespace Controller
     [System.Serializable]
     public class Weapon
     {
+        public string oh_idle;
+        public string th_idle;
+        
         public List<Action> actions;
         public List<Action> twoHandedActions;
         public bool LeftHandMirror;
+        
         public GameObject weaponModel;
         public WeaponHook w_hook;
 
